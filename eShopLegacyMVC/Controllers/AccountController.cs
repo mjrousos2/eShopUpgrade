@@ -2,7 +2,7 @@ using eShopLegacyMVC.Models;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
