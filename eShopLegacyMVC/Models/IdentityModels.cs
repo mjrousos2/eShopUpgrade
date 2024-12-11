@@ -1,24 +1,24 @@
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShopLegacyMVC.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : Microsoft.AspNetCore.Identity.IdentityUser
     {
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var userIdentity = await manager.CreateAsync(this);
             // Add custom user claims here
             return userIdentity;
         }
 
-        private int? _zipCode = null; 
+        private int? _zipCode = null;
 
         public int? ZipCode
         {
@@ -33,7 +33,7 @@ namespace eShopLegacyMVC.Models
 
                     var response = req.GetResponse();
                     var responseStream = response.GetResponseStream();
-                    using (var reader = new StreamReader(responseStream))
+using (var reader = new StreamReader(responseStream))
                     {
                         var zipCode = reader.ReadToEnd();
                         _zipCode = int.Parse(zipCode);
@@ -46,14 +46,14 @@ namespace eShopLegacyMVC.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-            : base("IdentityDBContext", throwIfV1Schema: false)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
         }
 
-        public static ApplicationDbContext Create()
+        public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
         {
-            return new ApplicationDbContext();
+            return new ApplicationDbContext(options);
         }
     }
 }
