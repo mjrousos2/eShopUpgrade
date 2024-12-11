@@ -1,4 +1,3 @@
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.IO;
 using System.Net;
 using System.Security.Claims;
@@ -13,7 +12,7 @@ namespace eShopLegacyMVC.Models
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var userIdentity = await manager.CreateIdentityAsync(this, "ApplicationCookie");
             // Add custom user claims here
             return userIdentity;
         }
@@ -46,14 +45,14 @@ namespace eShopLegacyMVC.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-            : base("IdentityDBContext", throwIfV1Schema: false)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
         }
 
-        public static ApplicationDbContext Create()
+        public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
         {
-            return new ApplicationDbContext();
+            return new ApplicationDbContext(options);
         }
     }
 }
