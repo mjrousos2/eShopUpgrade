@@ -7,6 +7,7 @@ using eShopLegacyMVC.Services;
 using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace eShopLegacyMVC.Controllers
