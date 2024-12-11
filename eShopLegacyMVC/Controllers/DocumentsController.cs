@@ -14,7 +14,7 @@ namespace eShopLegacyMVC.Controllers
             return View(files);
         }
 
-        [OutputCache(VaryByParam = "filename", Duration = int.MaxValue)]
+        [ResponseCache(VaryByQueryKeys = new[] { "filename" }, Duration = int.MaxValue)]
         public FileResult Download(string filename)
         {
             var fileService = FileService.Create();
