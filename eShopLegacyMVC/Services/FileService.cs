@@ -74,9 +74,9 @@ public void UploadFile(IFormFileCollection files)
                     var path = Path.Combine(configuration.BasePath, filename);
 
 using (var fs = File.Create(path))
+using (var inputStream = file.OpenReadStream())
                     {
-                        // TODO - Switch to CopyToAsync when upgrading to .NET 8
-                        file.InputStream.CopyTo(fs);
+                        inputStream.CopyTo(fs);
                     }
                 }
             });
