@@ -6,6 +6,7 @@ using eShopLegacyMVC.Models;
 using eShopLegacyMVC.Services;
 using log4net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 
 namespace eShopLegacyMVC.Controllers
@@ -36,12 +37,12 @@ namespace eShopLegacyMVC.Controllers
             _log.Info($"Now loading... /Catalog/Details?id={id}");
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             CatalogItem catalogItem = service.FindCatalogItem(id.Value);
             if (catalogItem == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             AddUriPlaceHolder(catalogItem);
 
@@ -91,12 +92,12 @@ throw new NotImplementedException("Messaging functionality needs to be reimpleme
             _log.Info($"Now loading... /Catalog/Edit?id={id}");
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             CatalogItem catalogItem = service.FindCatalogItem(id.Value);
             if (catalogItem == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             AddUriPlaceHolder(catalogItem);
             ViewBag.CatalogBrandId = new SelectList(service.GetCatalogBrands(), "Id", "Brand", catalogItem.CatalogBrandId);
@@ -128,12 +129,12 @@ throw new NotImplementedException("Messaging functionality needs to be reimpleme
             _log.Info($"Now loading... /Catalog/Delete?id={id}");
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             CatalogItem catalogItem = service.FindCatalogItem(id.Value);
             if (catalogItem == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             AddUriPlaceHolder(catalogItem);
 
