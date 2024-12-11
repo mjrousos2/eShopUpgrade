@@ -126,21 +126,49 @@ namespace eShopLegacyMVC.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> LogOff()
+        public ActionResult LogOff()
         {
-            await SignInManager.SignOutAsync();
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Catalog");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_userManager != null)
+                {
+                    _userManager.Dispose();
+                    _userManager = null;
+                }
+
+                if (_signInManager != null)
+                {
+                    _signInManager.Dispose();
+                    _signInManager = null;
+                }
+            }
+
+            base.Dispose(disposing);
         }
 
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
+
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError("", error);
             }
         }
 
@@ -153,7 +181,7 @@ namespace eShopLegacyMVC.Controllers
             return RedirectToAction("Index", "Catalog");
         }
 
-        internal class ChallengeResult : StatusCodeResult
+        internal class ChallengeResult : HttpUnauthorizedResult
         {
             public ChallengeResult(string provider, string redirectUri)
                 : this(provider, redirectUri, null)
@@ -161,7 +189,6 @@ namespace eShopLegacyMVC.Controllers
             }
 
             public ChallengeResult(string provider, string redirectUri, string userId)
-                : base(401)
             {
                 LoginProvider = provider;
                 RedirectUri = redirectUri;
@@ -172,14 +199,14 @@ namespace eShopLegacyMVC.Controllers
             public string RedirectUri { get; set; }
             public string UserId { get; set; }
 
-            public override void ExecuteResult(ActionContext context)
+            public override void ExecuteResult(ControllerContext context)
             {
                 var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
                 if (UserId != null)
                 {
-                    properties.Items[XsrfKey] = UserId;
+                    properties.Dictionary[XsrfKey] = UserId;
                 }
-                context.HttpContext.ChallengeAsync(LoginProvider, properties).Wait();
+                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
         #endregion
