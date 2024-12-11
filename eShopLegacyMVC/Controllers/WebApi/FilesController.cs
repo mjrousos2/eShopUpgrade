@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace eShopLegacyMVC.Controllers.WebApi
 {
@@ -28,10 +29,10 @@ namespace eShopLegacyMVC.Controllers.WebApi
                     Id = b.Id,
                     Brand = b.Brand
                 }).ToList();
-            var serializer = new Serializing();
+            var jsonString = JsonSerializer.Serialize(brands);
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StreamContent(serializer.SerializeBinary(brands))
+                Content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json")
             };
 
             return response;
