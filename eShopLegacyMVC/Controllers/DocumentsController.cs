@@ -1,6 +1,6 @@
 using eShopLegacyMVC.Services;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System.Net.Mime;
 using System.IO;
 
@@ -49,7 +49,7 @@ namespace eShopLegacyMVC.Controllers
         public ActionResult UploadDocument()
         {
             var fileService = FileService.Create();
-            fileService.UploadFile(Request.Files);
+            fileService.UploadFile(Request.Form.Files);
             return RedirectToAction("Index");
         }
     }
