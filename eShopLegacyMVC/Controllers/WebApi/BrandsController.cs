@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eShopLegacyMVC.Controllers.WebApi
 {
-    public class BrandsController : ApiController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BrandsController : ControllerBase
     {
         private ICatalogService _service;
 
@@ -18,34 +20,35 @@ namespace eShopLegacyMVC.Controllers.WebApi
         }
 
         // GET api/<controller>
-        public IEnumerable<Models.CatalogBrand> Get()
+    [HttpGet]
+    public ActionResult<IEnumerable<Models.CatalogBrand>> Get()
+    {
+        var brands = _service.GetCatalogBrands();
+        return Ok(brands);
+    }
+
+    // GET api/<controller>/5
+    [HttpGet("{id}")]
+    public ActionResult<Models.CatalogBrand> Get(int id)
+    {
+        var brands = _service.GetCatalogBrands();
+        var brand = brands.FirstOrDefault(x => x.Id == id);
+        if (brand == null) return NotFound();
+
+        return Ok(brand);
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(int id)
+    {
+        var brandToDelete = _service.GetCatalogBrands().FirstOrDefault(x => x.Id == id);
+        if (brandToDelete == null)
         {
-            var brands = _service.GetCatalogBrands();
-            return brands;
+            return NotFound();
         }
 
-        // GET api/<controller>/5
-        public IHttpActionResult Get(int id)
-        {
-            var brands = _service.GetCatalogBrands();
-            var brand = brands.FirstOrDefault(x => x.Id == id);
-            if (brand == null) return NotFound();
-
-            return Ok(brand);
-        }
-
-        [HttpDelete]
-        // DELETE api/<controller>/5
-        public IHttpActionResult Delete(int id)
-        {
-            var brandToDelete = _service.GetCatalogBrands().FirstOrDefault(x => x.Id == id);
-            if (brandToDelete == null)
-            {
-                return ResponseMessage(new HttpResponseMessage(HttpStatusCode.NotFound));
-            }
-
-            // demo only - don't actually delete
-            return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK));
-        }
+        // demo only - don't actually delete
+        return Ok();
+    }
     }
 }
