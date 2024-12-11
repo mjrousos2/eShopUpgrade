@@ -48,15 +48,15 @@ namespace eShopLegacyMVC.Controllers
 
                 var buffer = System.IO.File.ReadAllBytes(path);
 
-                return File(buffer, mimetype);
-            }
-
-            return HttpNotFound();
+            return File(buffer, mimetype);
         }
 
-        private string GetImageMimeTypeFromImageFileExtension(string extension)
-        {
-            string mimetype;
+        return NotFound();
+    }
+
+    private string GetImageMimeTypeFromImageFileExtension(string extension)
+    {
+        string mimetype;
 
             switch (extension)
             {
