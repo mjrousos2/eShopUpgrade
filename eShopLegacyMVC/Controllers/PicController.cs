@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace eShopLegacyMVC.Controllers
@@ -15,10 +16,12 @@ namespace eShopLegacyMVC.Controllers
         public const string GetPicRouteName = "GetPicRouteTemplate";
 
         private ICatalogService service;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PicController(ICatalogService service)
+        public PicController(ICatalogService service, IWebHostEnvironment webHostEnvironment)
         {
             this.service = service;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Pic/5.png
@@ -37,7 +40,7 @@ namespace eShopLegacyMVC.Controllers
 
             if (item != null)
             {
-                var webRoot = Server.MapPath("~/Pics");
+                var webRoot = Path.Combine(_webHostEnvironment.WebRootPath, "Pics");
                 var path = Path.Combine(webRoot, item.PictureFileName);
 
                 string imageFileExtension = Path.GetExtension(item.PictureFileName);
