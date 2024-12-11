@@ -109,7 +109,7 @@ throw new NotImplementedException("Messaging functionality needs to be reimpleme
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Exclude = "PictureUri,CatalogType,CatalogBrand")] CatalogItem catalogItem)
+        public ActionResult Edit([FromForm] CatalogItem catalogItem)
         {
             _log.Info($"Now processing... /Catalog/Edit?id={catalogItem.Id}");
             if (ModelState.IsValid)
