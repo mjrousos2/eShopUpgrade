@@ -1,15 +1,27 @@
-﻿using Microsoft.Owin;
-using Owin;
-using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
-[assembly: OwinStartupAttribute(typeof(eShopLegacyMVC.Startup))]
 namespace eShopLegacyMVC
 {
     public partial class Startup
     {
-        public void Configuration(IAppBuilder app)
+        public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureAuth(app);
+            // Configure services here
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                });
+        }
+
+        public void Configure(IApplicationBuilder app)
+        {
+            // Configure the HTTP request pipeline here
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using eShopLegacyMVC.Services;
-using System.Web;
-using System.Web.Mvc;
+using eShopLegacyMVC.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System.Net.Mime;
+using System.IO;
+
 
 namespace eShopLegacyMVC.Controllers
 {
@@ -13,14 +16,28 @@ namespace eShopLegacyMVC.Controllers
             return View(files);
         }
 
-        [OutputCache(VaryByParam = "filename", Duration = int.MaxValue)]
+        [ResponseCache(VaryByQueryKeys = new[] { "filename" }, Duration = int.MaxValue)]
         public FileResult Download(string filename)
         {
             var fileService = FileService.Create();
             var file = fileService.DownloadFile(filename);
-            FileContentResult fc = new FileContentResult(file, MimeMapping.GetMimeMapping(filename));
+            FileContentResult fc = new FileContentResult(file, GetMimeType(filename));
             fc.FileDownloadName = filename;
             return fc;
+        }
+
+        private string GetMimeType(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            return extension switch
+            {
+                ".txt" => MediaTypeNames.Text.Plain,
+                ".pdf" => MediaTypeNames.Application.Pdf,
+                ".jpg" or ".jpeg" => MediaTypeNames.Image.Jpeg,
+                ".gif" => MediaTypeNames.Image.Gif,
+                ".png" => "image/png",
+                _ => MediaTypeNames.Application.Octet
+            };
         }
 
         public ActionResult Upload()
@@ -32,7 +49,7 @@ namespace eShopLegacyMVC.Controllers
         public ActionResult UploadDocument()
         {
             var fileService = FileService.Create();
-            fileService.UploadFile(Request.Files);
+            fileService.UploadFile(Request.Form.Files);
             return RedirectToAction("Index");
         }
     }

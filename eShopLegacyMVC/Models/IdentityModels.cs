@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.IO;
 using System.Net;
@@ -17,7 +17,7 @@ namespace eShopLegacyMVC.Models
             return userIdentity;
         }
 
-        private int? _zipCode = null; 
+        private int? _zipCode = null;
 
         public int? ZipCode
         {
@@ -32,7 +32,7 @@ namespace eShopLegacyMVC.Models
 
                     var response = req.GetResponse();
                     var responseStream = response.GetResponseStream();
-                    using (var reader = new StreamReader(responseStream))
+using (var reader = new StreamReader(responseStream))
                     {
                         var zipCode = reader.ReadToEnd();
                         _zipCode = int.Parse(zipCode);
